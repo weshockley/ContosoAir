@@ -49,4 +49,4 @@ steps:
     azureSubscription: 'Azure Connection'
     appType: 'webApp'
     WebAppName: '$(web_prefix)-$(web_site)-$(web_env)'
-    packageForLinux: '$(Pipeline.Workspace)/**/*/.zip'
+    packageForLinux: '$(Pipeline.Workspace)/**/*.zip'
