@@ -1,0 +1,52 @@
+# Starter pipeline
+# Start with a minimal pipeline that you can customize to build and deploy your code.
+# Add steps that build, run tests, deploy, and more:
+# https://aka.ms/yaml
+
+trigger:
+- none
+
+resources:
+ pipelines:
+ - pipeline: buildContosoAir # identifier for the resource used in pipeline resource variables
+   source: weshockley.ContosoAir # name of the pipeline that produces the artifact
+   trigger:
+    branches:
+     include:
+     - master
+
+pool:
+  vmImage: ubuntu-latest
+  
+
+
+steps:
+- task: DownloadPipelineArtifact@2
+  inputs:
+    buildType: 'specific'
+    project: '83f6418d-f7f8-472c-bc7d-34895c766a89'
+    definition: '27'
+    buildVersionToDownload: 'latest'
+    targetPath: '$(Pipeline.Workspace)'
+
+- task: AzureResourceManagerTemplateDeployment@3
+  inputs:
+    deploymentScope: 'Resource Group'
+    azureResourceManagerConnection: 'Azure Connection'
+    subscriptionId: 'f7dd115c-fc4c-4934-91f1-90a9c28a30ff'
+    action: 'Create Or Update Resource Group'
+    resourceGroupName: 'yamlrg'
+    location: 'Central US'
+    templateLocation: 'Linked artifact'
+    csmFile: '$(Pipeline.Workspace)/drop/Templates/azuredeploy.json'
+    csmParametersFile: '$(Pipeline.Workspace)/drop/Templates/azuredeploy.parameters.json'
+    overrideParameters: '-p_environment $(web_env) -p_site_prefix $(web_prefix) -p_site_web_name $(web_site)'
+    deploymentMode: 'Incremental'
+
+- task: AzureRmWebAppDeployment@4
+  inputs:
+    ConnectionType: 'AzureRM'
+    azureSubscription: 'Azure Connection'
+    appType: 'webApp'
+    WebAppName: '$(web_prefix)-$(web_site)-$(web_env)'
+    packageForLinux: '$(Pipeline.Workspace)/*/.zip'
