@@ -2,7 +2,7 @@
 
 [![Build Status](https://dev.azure.com/eshockley/GH%20Integration/_apis/build/status/weshockley.ContosoAir?branchName=master)](https://dev.azure.com/eshockley/GH%20Integration/_build/latest?definitionId=27&branchName=master)
 
-# Microsoft.Github CI Demo
+# Microsoft.Github CI 
 
 Demo website application for Contoso Air.  
 Runs a nodejs server (Express v4.16) that stores customer booked flights in a CosmosDb database.
